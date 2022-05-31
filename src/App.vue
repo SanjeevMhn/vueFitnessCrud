@@ -35,8 +35,11 @@
       }
     },
     watch:{
-      viewTask(newId,oldId){
-        this.viewTask = newId;
+      viewTask(newVal,oldVal){
+        if(newVal && newVal !== ''){
+          this.viewTask = newVal
+          this.showTaskModal();
+        }
       }
     },
     methods:{
@@ -74,19 +77,21 @@
       },
       showTask(id){
         this.viewTask = id;
-        this.viewTaskModal = true;
-        console.log(id);
+        console.log(this.viewTask);
       },
       closeViewModal(state){
         this.viewTaskModal = state;
         this.editTask = false;
+      },
+      showTaskModal(){
+        this.viewTaskModal = true;
       }
     }
   }
 </script>
 
 <template>
-  <div class="content-container" :class="[openAddPostModal ? 'bg-unfocus' : '']">
+  <div class="content-container" :class="[openAddPostModal || viewTaskModal ? 'bg-unfocus' : '']">
     <h2 class="header-text">Vue Crud</h2>
     <div class="create-post">
       <button class="btn create-btn" type="button" @click="openAddPost">Create Post</button>
@@ -107,7 +112,7 @@
       <AddPost @closeForm="closeAddPostForm" @newData="addToTaskList" @updateForm="updateTaskList" :dataItems="dataItems" :editTask="editTask"/>
     </div>
     <div class="view-post-container" :class="[viewTaskModal ? 'showForm':'']">
-      <ViewPost @closeViewModal="closeViewModal" :dataItems="dataItems" :viewTask="viewTask" />
+      <ViewPost @closeViewModal="closeViewModal" :dataItems="dataItems" :viewTask = "viewIndex" />
     </div>
   </div>
 
