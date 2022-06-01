@@ -8,19 +8,32 @@
                     "title": "",
                     "desc": "",
                 },
-                taskId: this.viewTask,
+                viewModal: false,
             }
         },
+        beforeUpdate(){
+            this.addData();
+        },
+        methods:{
+            addData(){
+                this.dataItems.map((data,index)=>{
+                    if(data.id === this.viewTask){
+                        this.$refs.taskTitle.innerHTML = data.title;
+                        this.$refs.taskDesc.innerHTML = data.desc;
+                    }
+                }) 
+            }
+        }
     }
 </script>
 
 <template>
     <div class="view-post">
         <div class="container">
-            <button class="close-btn" @click="$emit('closeViewModal',false)">
+            <button class="close-btn" @click="$emit('closeModal',viewModal)">
                 &times;
             </button>
-            <h2 class="title" ref="taskTitle">{{taskId}}</h2>
+            <h2 class="title" ref="taskTitle"></h2>
             <p class="desc" ref="taskDesc"></p>
         </div>
     </div>
@@ -35,6 +48,9 @@
             background-color: #fff;
             border-radius: 5px;
             color: #000;
+            height: 100%;
+            position: relative;
+            min-height: 20rem;
             .close-btn{
                 font-size: 2rem;
                 outline: none;

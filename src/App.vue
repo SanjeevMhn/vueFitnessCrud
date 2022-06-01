@@ -5,6 +5,10 @@
     components: { AddPost, ViewPost },
     data(){
       return{
+        mounted(){
+          console.log(process.env.VUE_APP_GETCALROIES);
+          console.log("Hello");
+        },
         dataItems: [
           {
             "id": 1,
@@ -36,33 +40,31 @@
     },
     watch:{
       viewTask(newVal,oldVal){
-        if(newVal && newVal !== ''){
-          this.viewTask = newVal
-          this.showTaskModal();
+        if(newVal || newVal !== ''){
+          this.viewTaskModal = true;
         }
+        if(!newVal){
+          this.viewTaskModal = false;
+        }
+        
       }
     },
     methods:{
       openAddPost(){
         this.openAddPostModal = true;
-        console.log(this.editTask);
       },
       closeAddPostForm(state,editTask){
         this.openAddPostModal = state;
         this.editTask = editTask;
-        console.log(editTask);
       },
       addToTaskList(task){
         this.dataItems.push(task);
-        console.log("Hello");
       },
       openEditPost(taskId){
         this.openAddPost();
         this.editTask = taskId;
       },
       updateTaskList(task){
-        console.log("From App");
-        console.log(this.dataItems);
         this.dataItems.map((data,index) => {
           if(data.id === task.id){
             data.title = task.title;
@@ -79,19 +81,23 @@
         this.viewTask = id;
         console.log(this.viewTask);
       },
-      closeViewModal(state){
-        this.viewTaskModal = state;
-        this.editTask = false;
+      closeViewModal(viewModal){
+        this.viewTaskModal = viewModal;
+        this.viewTask = false;
+
+        console.log('close');
       },
       showTaskModal(){
         this.viewTaskModal = true;
+      },
+      closeActiveModal(){
       }
     }
   }
 </script>
 
 <template>
-  <div class="content-container" :class="[openAddPostModal || viewTaskModal ? 'bg-unfocus' : '']">
+  <div class="content-container" :class="[openAddPostModal || viewTaskModal ? 'bg-unfocus' : '']" ref="contentContainer" @click="closeActiveModal">
     <h2 class="header-text">Vue Crud</h2>
     <div class="create-post">
       <button class="btn create-btn" type="button" @click="openAddPost">Create Post</button>
@@ -111,8 +117,8 @@
     <div class="add-post-container" :class="[openAddPostModal ? 'showForm':'']">
       <AddPost @closeForm="closeAddPostForm" @newData="addToTaskList" @updateForm="updateTaskList" :dataItems="dataItems" :editTask="editTask"/>
     </div>
-    <div class="view-post-container" :class="[viewTaskModal ? 'showForm':'']">
-      <ViewPost @closeViewModal="closeViewModal" :dataItems="dataItems" :viewTask = "viewIndex" />
+    <div class="view-post-container" :class="[viewTaskModal ? 'showForm':'']" ref="viewPostContainer">
+      <ViewPost @closeModal="closeViewModal" :dataItems="dataItems" :viewTask = "this.viewTask" />
     </div>
   </div>
 
@@ -178,6 +184,11 @@
         border-radius: 5px;
         .title{
           cursor: pointer;
+          border: none;
+          outline: none;
+          background-color: transparent;
+          font-size: 1.25rem;
+          font-weight: bold;
         }
         .actions{
           display: flex;
